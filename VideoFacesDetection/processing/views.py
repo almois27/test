@@ -33,8 +33,6 @@ def upload_video(request):
     elif request.method == 'GET':
         #Получение текущего статуса (включая агрегацию результатов процессинга) по всем загруженным видео.
         v = Video.objects.all()  
-        
-
         #transaction.on_commit(lambda: start_processing.delay())  
         return render(request,'upload.html', {'video_list':v})
 
@@ -46,7 +44,6 @@ def cancel(request, video_id):
         v = Video.objects.get( id = video_id)
     except:
         raise Http404("Видео не найдено")
-    num_faces = 0 
-    return render(request,'videos.html',{'video':v, 'numfaces': num_faces})
+    return render(request,'videos.html',{'video':v})
 
 
