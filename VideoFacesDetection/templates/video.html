@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Просмотр {{video.title}}{% endblock %}
+
+{% block content %}
+	
+
+	{% if video %}
+	<div class="card">
+		<div class="card-body">
+			<video width="500"controls class="card-img-top">
+			<source src="{{video.video.url}}" type="video/mp4">
+			</video>
+			<h5  class="card-title"> {{video.title}} </h5>
+		</div>
+
+		<div class="card-body">
+			<h5 class="mb-1" id = "status_h">Статус </h5>
+			<h5 class="mb-1" id = "progress_h">Прогресс </h5>
+            <h5 class="mb-1" id = "result_h">Результат</h5>
+        </div>
+        
+			<div class="card-body">
+				<button type="button" class="btn btn-primary" id = "PAUSE">Пауза</button>
+                <button type="button" class="btn btn-primary" id = "RESUME">Продолжить</button>
+				<button type="button" class="btn btn-primary" id = "STOP">Отмена</button>
+			  </div>  
+		 
+	
+       
+	</div>
+	{% else %}
+		Видео не найдено
+	{% endif %}
+
+{% endblock %}
+{% block add_script %} 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+        $.ajax({
+            type: "GET",
+            url: 'get_task_id',
+            success: function (data) {
+                get_video_info(data.video_id)
+                }
+        });  
+       
+        function get_video_info(id) {
+            var status_hdr = $(`#status_h`);
+            var progress_hdr = $(`#progress_h`);
+            var result_hdr = $(`#result_h`);
+
+            $.ajax({
+                    type: 'get',
+                    url: 'get_task_info',
+                    data: {'v_id': id},
+                    success: function (data) {
+                        status_hdr.html(data.status)  
+                        progress_hdr.html(data.progress) 
+                        result_hdr.html(data.result)
+                        if( data.status != "completed" && data.status != "canceled" )
+                        {  setTimeout(function () {
+                                get_video_info(id)
+                            }, 1000);
+                        }            
+                    }  
+                
+                })
+        };   
+        $("#STOP").click(function(e) {
+            $.ajax({
+            type: "GET",
+            url: "",
+            data: {
+                stop_click: true
+            }
+         });
+        });
+        $("#PAUSE").click(function(e) {
+            $.ajax({
+            type: "GET",
+            url: "",
+            data: {
+                pause_click: true
+            }
+            });
+        });
+        $("#RESUME").click(function(e) {
+            $.ajax({
+            type: "GET",
+            url: "",
+            data: {
+                resume_click: true
+            }
+            });
+        });
+        
+    </script>
+{% endblock %}

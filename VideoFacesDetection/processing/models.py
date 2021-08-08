@@ -8,6 +8,7 @@ class Video(models.Model):
 
     status = models.CharField(max_length=100, default = "waiting")
     num_faces = models.IntegerField(default = 0)
+    task_id = models.CharField(max_length=200, default = "")
     progress = models.PositiveSmallIntegerField(
         default=0,
         editable=False
@@ -28,5 +29,10 @@ class Video(models.Model):
 
     def update_status(self, status="canceled" , commit=True):
         self.status = status
+        if commit:
+            self.save()
+
+    def update_task_id(self, task_id, commit=True):
+        self.task_id = task_id
         if commit:
             self.save()
